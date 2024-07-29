@@ -77,7 +77,7 @@ function App() {
           responseTo ? "pb-36" : "pb-20"
         } p-5 flex flex-col gap-4`}
         style={{
-          backgroundImage: back
+          backgroundImage: `url(${back})`
         }}
       >
         {messages.map((message, index) => (
