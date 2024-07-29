@@ -18,11 +18,17 @@ function App() {
   const [reconnectInterval, setReconnectInterval] = useState(3000); // Time in milliseconds for reconnection attempts
   const [emojiOpen, setEmojiOpen] = useState(false);
   const usernameRef = useRef(null);
+  const mesBox = useRef();
+  const inputBox = useRef();
+  const prevUserRef = useRef("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setButtonVis(false);
-    localStorage.setItem("user", usernameRef.current.value);
+    const username = usernameRef.current.value;
+    if (username !== localStorage.getItem("user")) {
+      localStorage.setItem("user", username);
+    }
   };
 
   // WebSocket related stuff
@@ -50,22 +56,14 @@ function App() {
     sendMessage(JSON.stringify(data));
   };
 
-  //related to socket
-
-  const mesBox = useRef();
-  const inputBox = useRef();
-
   useEffect(() => {
     if (mesBox.current) {
       mesBox.current.scrollTop = mesBox.current.scrollHeight;
     }
-  }, [messages, responseTo]);
-
-  useEffect(() => {
     if (inputBox.current) {
       inputBox.current.scrollTop = inputBox.current.scrollHeight;
     }
-  }, [currentTyping]);
+  }, [messages, responseTo, currentTyping]);
 
   const addMessage = (message) => {
     sendToSocket(message);
@@ -81,24 +79,31 @@ function App() {
     <div className="h-screen flex justify-center items-center">
       <div
         ref={mesBox}
-        className={`w-full lg:w-1/2 h-full scroll-smooth bg-center bg-cover overflow-y-scroll pt-20 ${
+        className={`w-full lg:w-1/2 h-full scroll-smooth bg-center overscroll-none bg-cover overflow-y-scroll pt-20 ${
           responseTo ? "pb-36" : "pb-20"
-        } p-5 flex flex-col gap-4`}
+        } p-5 flex flex-col gap-[2px]`}
         style={{
           backgroundImage: `url(${back})`,
         }}
       >
-        {messages.map((message, index) => (
-          <Message
-            key={index}
-            them={message.from != localStorage.getItem("user")}
-            from={message.from}
-            text={message.text}
-            time={message.time}
-            responseTo={message.responseTo}
-            setResponseTo={setResponseTo}
-          />
-        ))}
+        {messages.map((message, index) => {
+          const isDifferentUser = message.from !== prevUserRef.current;
+          prevUserRef.current = message.from;
+          return (
+            <div key={index}>
+              {isDifferentUser && <div className="w-full h-[6px]"></div>}
+              <Message
+                key={message.id}
+                them={message.from !== localStorage.getItem("user")}
+                from={message.from}
+                text={message.text}
+                time={message.time}
+                responseTo={message.responseTo}
+                setResponseTo={setResponseTo}
+              />
+            </div>
+          );
+        })}
       </div>
 
       <div className="fixed top-0 w-full lg:w-1/2 h-14 bg-gray-400">
@@ -187,12 +192,12 @@ function App() {
             value={currentTyping}
             type="text"
             className={`w-full text-wrap resize-none break-words rounded-xl pr-24 py-4 ${
-              currentTyping[0] == "/" ? "text-blue-700 " : "text-black "
+              currentTyping[0] === "/" ? "text-blue-700 " : "text-black "
             } pl-4 focus:outline-none bg-white h-full`}
             placeholder="Type your message..."
           />
           <button
-            className="absolute right-20 h-full w-10 content-center text-black"
+            className="hidden md:absolute right-20 h-full w-10 content-center text-black"
             type="button"
             onClick={() => setEmojiOpen(!emojiOpen)}
           >
@@ -201,7 +206,9 @@ function App() {
           {emojiOpen && (
             <div className="absolute mb-1 max-w-[100%] bottom-full right-0">
               <EmojiPicker
+                open={emojiOpen}
                 skinTonesDisabled
+                searchDisabled
                 onEmojiClick={onEmojiClick}
                 onBlur={() => {
                   setEmojiOpen(false);
