@@ -162,7 +162,6 @@ function App() {
             onChange={(e) => {
               setCurrentTyping(e.target.value);
             }}
-            value={currentTyping}
             type="text"
             className={`w-full text-wrap resize-none break-words rounded-xl pr-24 py-4 ${currentTyping[0] == '/'? "text-blue-700 ":"text-black " } pl-4 focus:outline-none bg-white h-full`}
             placeholder="Type your message..."
