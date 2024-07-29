@@ -63,7 +63,7 @@ function App() {
     if (inputBox.current) {
       inputBox.current.scrollTop = inputBox.current.scrollHeight;
     }
-  }, [messages]);
+  }, [currentTyping]);
 
   const addMessage = (message) => {
     sendToSocket(message);
@@ -133,7 +133,7 @@ function App() {
         </div>
       </div>
 
-      <div className="lg:w-[49%] w-[98%] h-14 m-1 absolute bottom-0">
+      <div className="lg:w-[49%] w-[98%] m-1 absolute bottom-0">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -181,7 +181,14 @@ function App() {
               </div>
             </div>
           )}
-          <input
+          
+          <textarea
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                e.target.form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+              }
+            }}
             ref={inputBox}
             onChange={(e) => {
               setCurrentTyping(e.target.value);
@@ -191,13 +198,13 @@ function App() {
             }}
             value={currentTyping}
             type="text"
-            className={`w-full text-wrap resize-none break-words rounded-xl pr-24 py-4 ${
+            className={`w-full appearance-none text-wrap resize-none break-words rounded-xl pr-24 py-4 ${
               currentTyping[0] === "/" ? "text-blue-700 " : "text-black "
-            } pl-4 focus:outline-none bg-white h-full`}
+            } pl-4 focus:outline-none bg-white`}
             placeholder="Type your message..."
           />
           <button
-            className="hidden md:absolute right-20 h-full w-10 content-center text-black"
+            className="hidden md:block md:absolute right-20 top-0 h-full w-10 content-center text-black"
             type="button"
             onClick={() => setEmojiOpen(!emojiOpen)}
           >
