@@ -63,7 +63,7 @@ function App() {
     if (inputBox.current) {
       inputBox.current.scrollTop = inputBox.current.scrollHeight;
     }
-  }, [messages, responseTo, currentTyping]);
+  }, [messages]);
 
   const addMessage = (message) => {
     sendToSocket(message);
