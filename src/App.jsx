@@ -4,6 +4,7 @@ import useWebSocket from "react-use-websocket";
 import cross from './assets/cross.png'
 import save from './assets/save.png'
 import send from './assets/send.png'
+import back from './assets/back4.jpg'
 
 function App() {
   const [messages, setMessages] = useState([]);
@@ -62,23 +63,6 @@ function App() {
   }, [currentTyping]);
 
   const addMessage = (message) => {
-    // Check if the message starts with '/'
-    if (message.text.startsWith('/')) {
-      // Extract the command from the message
-      const command = message.text.split(' ')[0];
-  
-      // Use a switch statement to handle different commands
-      switch (command) {
-        case '/clear':
-          break;
-        case '/howgay':
-          break;
-        default:
-          alert(`Command ${command} not recognized.`);
-          return;
-      }
-    }
-
     sendToSocket(message);
   };
   
@@ -89,9 +73,12 @@ function App() {
     <div className="h-screen flex justify-center items-center">
       <div
         ref={mesBox}
-        className={`w-full lg:w-1/2 h-full scroll-smooth bg-back4 bg-center bg-cover overflow-y-scroll pt-20 ${
+        className={`w-full lg:w-1/2 h-full scroll-smooth bg-center bg-cover overflow-y-scroll pt-20 ${
           responseTo ? "pb-36" : "pb-20"
         } p-5 flex flex-col gap-4`}
+        style={{
+          backgroundImage: back
+        }}
       >
         {messages.map((message, index) => (
           <Message
