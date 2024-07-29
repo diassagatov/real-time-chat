@@ -36,7 +36,7 @@ const Message = ({ them, from, text, responseTo, time, setResponseTo }) => {
       className={`flex ${them ? "justify-start" : "justify-end"}`}
       style={{ transform: `translateX(${translateX}px)`, transition: 'transform 0.3s ease-out' }}
     >
-      <div className="bg-white shadow-md backdrop-blur-sm bg-opacity-80 text-wrap text-gray-800 px-3 py-2 rounded-lg min-w-32 max-w-80">
+      <div className={`bg-white shadow-md backdrop-blur-sm bg-opacity-80 text-wrap text-gray-800 px-2 py-1 pr-10 max-w-80 rounded-lg`}>
         <p className={`text-wrap text-xs ${them ? "text-purple-600" : "hidden"} break-words`}>
           {from}
         </p>
@@ -51,8 +51,9 @@ const Message = ({ them, from, text, responseTo, time, setResponseTo }) => {
             </p>
           </div>
         )}
-        <p className="text-wrap break-words">{text}</p>
-        <p className="text-wrap text-xs text-right">{time}</p>
+        <p className="text-wrap break-words ">{text}</p>
+        <br className={`${text.length % 32 > 27 || text.length % 32 <= 3 ? '' : 'hidden'}`} />
+        <span className="text-[11px] text-black inline-block fixed right-[6px] bottom-1 ">{time}</span>
       </div>
     </div>
   );

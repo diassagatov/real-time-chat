@@ -5,7 +5,7 @@ import cross from "./assets/cross.png";
 import save from "./assets/save.png";
 import send from "./assets/send.png";
 import emoji from "./assets/emoji.svg";
-import back from "./assets/back4.jpg";
+import back from "./assets/back6.jpg";
 import EmojiPicker from "emoji-picker-react";
 
 const img = new Image();
@@ -63,7 +63,7 @@ function App() {
     if (inputBox.current) {
       inputBox.current.scrollTop = inputBox.current.scrollHeight;
     }
-  }, [currentTyping]);
+  }, [currentTyping, messages]);
 
   const addMessage = (message) => {
     sendToSocket(message);
@@ -76,37 +76,13 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div
-        ref={mesBox}
-        className={`w-full lg:w-1/2 h-full scroll-smooth bg-center overscroll-none bg-cover overflow-y-scroll pt-20 ${
-          responseTo ? "pb-36" : "pb-20"
-        } p-5 flex flex-col gap-[2px]`}
-        style={{
-          backgroundImage: `url(${back})`,
-        }}
-      >
-        {messages.map((message, index) => {
-          const isDifferentUser = message.from !== prevUserRef.current;
-          prevUserRef.current = message.from;
-          return (
-            <div key={index}>
-              {isDifferentUser && <div className="w-full h-[6px]"></div>}
-              <Message
-                key={message.id}
-                them={message.from !== localStorage.getItem("user")}
-                from={message.from}
-                text={message.text}
-                time={message.time}
-                responseTo={message.responseTo}
-                setResponseTo={setResponseTo}
-              />
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="fixed top-0 w-full lg:w-1/2 h-14 bg-gray-400">
+    <div
+      className="h-screen flex flex-col bg-cover  bg-center  w-full lg:w-1/2 justify-center items-center"
+      style={{
+        backgroundImage: `url(${back})`,
+      }}
+    >
+      <div className="w-full h-14 bg-gray-400">
         <div className="w-full h-full bg-white text-gray-800 text-lg px-3 flex items-center">
           <form className="w-full flex items-center" onSubmit={handleSubmit}>
             <input
@@ -133,7 +109,33 @@ function App() {
         </div>
       </div>
 
-      <div className="lg:w-[49%] w-[98%] m-1 absolute bottom-0">
+      <div
+        ref={mesBox}
+        className={`w-full h-full flex-grow scroll-smooth overscroll-none  overflow-y-scroll ${
+          responseTo ? "pb-16" : ""
+        } p-5 flex flex-col gap-[2px]`}
+      >
+        {messages.map((message, index) => {
+          const isDifferentUser = message.from !== prevUserRef.current;
+          prevUserRef.current = message.from;
+          return (
+            <div key={index}>
+              {isDifferentUser && <div className="w-full h-[6px]"></div>}
+              <Message
+                key={message.id}
+                them={message.from !== localStorage.getItem("user")}
+                from={message.from}
+                text={message.text}
+                time={message.time}
+                responseTo={message.responseTo}
+                setResponseTo={setResponseTo}
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="w-full h-14 relative">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -160,7 +162,7 @@ function App() {
 
             setResponseTo(null);
           }}
-          className="w-full h-full rounded-xl"
+          className="w-full rounded-xl"
         >
           {responseTo && (
             <div className="w-30 py-2 content-center px-4 absolute bottom-full w-full rounded-xl text-black backdrop-blur-sm bg-opacity-90 bg-white">
@@ -181,12 +183,14 @@ function App() {
               </div>
             </div>
           )}
-          
+
           <textarea
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
-                e.target.form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                e.target.form.dispatchEvent(
+                  new Event("submit", { cancelable: true, bubbles: true })
+                );
               }
             }}
             ref={inputBox}
