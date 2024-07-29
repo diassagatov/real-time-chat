@@ -102,7 +102,7 @@ function App() {
               ref={usernameRef}
               className="w-full pr-24 py-4 text-black pl-4 focus:outline-none bg-white h-full"
               placeholder="Enter your username..."
-              value={localStorage.getItem('user')}
+              defaultValue={localStorage.getItem('user')}
               name="username"
               id="username"
             />
